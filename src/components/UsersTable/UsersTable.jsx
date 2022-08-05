@@ -1,13 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import User from '../User';
 import Pagination from '../Pagination';
 import paginate from '../../utils/paginate';
 
-const UsersTable = ({ users, ...rest }) => {
+const UsersTable = ({ users, selectedProf, ...rest }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const length = users.length;
   const pageSize = 4;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedProf]);
 
   const handlePageChange = pageNum => {
     setCurrentPage(pageNum);
@@ -48,6 +52,7 @@ const UsersTable = ({ users, ...rest }) => {
 
 UsersTable.propTypes = {
   users: PropTypes.array.isRequired,
+  selectedProf: PropTypes.object,
 };
 
 export default UsersTable;
