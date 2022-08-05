@@ -13,13 +13,10 @@ const UserView = () => {
 
   useEffect(() => {
     fetchAllProfessions().then(res => setProfessions(res));
-    fetchAllUsers().then(res => setUsers(res));
-    // setProfessions(Object.assign(res, { name: 'Все профессии' })),
   }, [professions]);
 
   useEffect(() => {
     fetchAllUsers().then(res => setUsers(res));
-    // setProfessions(Object.assign(res, { name: 'Все профессии' })),
   }, []);
 
   const handleProfessionSelect = items => {
