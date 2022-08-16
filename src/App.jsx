@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import UserView from './views/UserView';
 
 function App() {

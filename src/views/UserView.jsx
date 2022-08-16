@@ -1,22 +1,33 @@
 import { useState, useEffect } from 'react';
+import _ from 'lodash';
 import GroupList from '../components/GroupList';
 import SearchStatus from '../components/SearchStatus';
 import UsersTable from '../components/UsersTable';
-// import api from '../api';
+import CustomLoader from '../components/CustomLoader';
 import fetchAllProfessions from '../api/fake.api.new/professions.api';
 import fetchAllUsers from '../api/fake.api.new/user.api';
 
 const UserView = () => {
   const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [professions, setProfessions] = useState([]);
   const [selectedProf, setSelectedProf] = useState(null);
+  const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' });
 
   useEffect(() => {
-    fetchAllProfessions().then(res => setProfessions(res));
+    setIsLoading(true);
+
+    fetchAllProfessions()
+      .then(res => setProfessions(res))
+      .then(() => setIsLoading(false));
   }, [professions]);
 
   useEffect(() => {
-    fetchAllUsers().then(res => setUsers(res));
+    setIsLoading(true);
+
+    fetchAllUsers()
+      .then(res => setUsers(res))
+      .then(() => setIsLoading(false));
   }, []);
 
   const handleProfessionSelect = items => {
@@ -28,6 +39,8 @@ const UserView = () => {
     : users;
 
   const length = filteredUsers.length;
+
+  const sortedUsers = _.orderBy(filteredUsers, sortBy.path, sortBy.order);
 
   const handleDeleteUser = id => {
     setUsers(users.filter(user => user._id !== id));
@@ -47,26 +60,38 @@ const UserView = () => {
     setSelectedProf();
   };
 
+  const handleSortBy = item => {
+    setSortBy(item);
+  };
+
   return (
-    <div className="d-flex p-3 justify-content-around p-3">
-      {professions && (
-        <GroupList
-          items={professions}
-          onSelectItem={handleProfessionSelect}
-          selectedItem={selectedProf}
-          onClearFilter={handleClearFilter}
-        />
+    <>
+      {isLoading ? (
+        <CustomLoader />
+      ) : (
+        <div className="d-flex p-3 justify-content-around p-3">
+          {professions && (
+            <GroupList
+              items={professions}
+              onSelectItem={handleProfessionSelect}
+              selectedItem={selectedProf}
+              onClearFilter={handleClearFilter}
+            />
+          )}
+          <div className="d-flex flex-column ms-4 align-items-center">
+            <SearchStatus num={length} />
+            <UsersTable
+              onSort={handleSortBy}
+              selectedProf={selectedProf}
+              users={sortedUsers}
+              onDeleteItem={handleDeleteUser}
+              selectedSort={sortBy}
+              onToggleBookMark={handleToggleBookMark}
+            />
+          </div>
+        </div>
       )}
-      <div className="d-flex flex-column ms-4 align-items-center">
-        <SearchStatus num={length} />
-        <UsersTable
-          selectedProf={selectedProf}
-          users={filteredUsers}
-          onDeleteItem={handleDeleteUser}
-          onToggleBookMark={handleToggleBookMark}
-        />
-      </div>
-    </div>
+    </>
   );
 };
 
