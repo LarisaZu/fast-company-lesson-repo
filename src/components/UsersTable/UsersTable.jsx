@@ -4,7 +4,6 @@ import Pagination from '../Pagination';
 import BookMark from '../BookMark';
 import QualitiesList from '../QualitiesList';
 import Table from '../Table';
-import Caret from '../Caret';
 
 const UsersTable = ({
   users,

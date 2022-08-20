@@ -5,7 +5,7 @@ import SearchStatus from '../components/SearchStatus';
 import UsersTable from '../components/UsersTable';
 import CustomLoader from '../components/CustomLoader';
 import fetchAllProfessions from '../api/fake.api.new/professions.api';
-import fetchAllUsers from '../api/fake.api.new/user.api';
+import { fetchAllUsers } from '../api/fake.api.new/user.api';
 
 const UserView = () => {
   const [users, setUsers] = useState([]);
@@ -15,19 +15,33 @@ const UserView = () => {
   const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' });
 
   useEffect(() => {
+    let isCleanup = false;
     setIsLoading(true);
 
-    fetchAllProfessions()
-      .then(res => setProfessions(res))
-      .then(() => setIsLoading(false));
+    fetchAllProfessions().then(res => {
+      if (!isCleanup) {
+        setProfessions(res);
+        setIsLoading(false);
+      }
+    });
+    return () => {
+      isCleanup = true;
+    };
   }, [professions]);
 
   useEffect(() => {
+    let isCleanup = false;
     setIsLoading(true);
 
-    fetchAllUsers()
-      .then(res => setUsers(res))
-      .then(() => setIsLoading(false));
+    fetchAllUsers().then(res => {
+      if (!isCleanup) {
+        setUsers(res);
+        setIsLoading(false);
+      }
+    });
+    return () => {
+      isCleanup = true;
+    };
   }, []);
 
   const handleProfessionSelect = items => {
