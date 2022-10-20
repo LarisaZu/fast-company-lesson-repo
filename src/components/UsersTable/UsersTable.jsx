@@ -4,6 +4,7 @@ import Pagination from '../Pagination';
 import BookMark from '../BookMark';
 import QualitiesList from '../QualitiesList';
 import Table from '../Table';
+import paginate from '../../utils/paginate';
 
 const UsersTable = ({
   users,
@@ -60,7 +61,7 @@ const UsersTable = ({
     setCurrentPage(pageNum);
   };
 
-  // const usersCrop = paginate(users, pageSize, currentPage);
+  const usersCrop = paginate(users, pageSize, currentPage);
 
   return (
     <>
@@ -69,7 +70,7 @@ const UsersTable = ({
           onSort={onSort}
           selectedSort={selectedSort}
           columns={columns}
-          data={users}
+          data={usersCrop}
         />
       )}
       <Pagination
