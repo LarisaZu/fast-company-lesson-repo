@@ -1,8 +1,10 @@
-import { Link } from 'react-router-dom';
+import { Link, useRouteMatch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 const TableBody = ({ data, columns }) => {
+  const { url } = useRouteMatch();
+
   const renderContent = (item, column) => {
     if (columns[column].content) {
       const component = columns[column].content;
@@ -23,7 +25,7 @@ const TableBody = ({ data, columns }) => {
             return (
               <td key={column}>
                 {column === 'name' ? (
-                  <Link to={`/users/${item._id}`}>
+                  <Link to={`${url}/${item._id}`}>
                     {renderContent(item, column)}
                   </Link>
                 ) : (

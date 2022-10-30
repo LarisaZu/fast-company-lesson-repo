@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
+import { toast } from 'react-toastify';
 import GroupList from '../components/GroupList';
 import SearchStatus from '../components/SearchStatus';
 import UsersTable from '../components/UsersTable';
 import CustomLoader from '../components/CustomLoader';
 import TextInput from '../components/TextInput';
-import fetchAllProfessions from '../api/fake.api.new/professions.api';
-import { fetchAllUsers } from '../api/fake.api.new/user.api';
+import API from '../api';
 
 const UserView = () => {
   const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [professions, setProfessions] = useState([]);
   const [selectedProf, setSelectedProf] = useState(null);
   const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' });
@@ -18,31 +18,29 @@ const UserView = () => {
 
   useEffect(() => {
     let isCleanup = false;
-    setIsLoading(true);
 
-    fetchAllProfessions().then(res => {
-      if (!isCleanup) {
-        setProfessions(res);
-        setIsLoading(false);
-      }
-    });
-    return () => {
-      isCleanup = true;
+    const fetchData = async () => {
+      await Promise.all([API.fetchAllProfessions(), API.users.fetchAllUsers()])
+        .then(res => {
+          if (!isCleanup) {
+            setProfessions(res[0]);
+            setUsers(res[1]);
+            setIsLoading(false);
+          }
+        })
+        .catch(err => {
+          toast.error('Что-то не так! Повторите запрос позже', {
+            position: 'top-center',
+          });
+          setIsLoading(false);
+        });
     };
-  }, [professions]);
 
-  useEffect(() => {
-    let isCleanup = false;
-    setIsLoading(true);
+    fetchData();
 
-    fetchAllUsers().then(res => {
-      if (!isCleanup) {
-        setUsers(res);
-        setIsLoading(false);
-      }
-    });
     return () => {
       isCleanup = true;
+      setIsLoading(false);
     };
   }, []);
 
@@ -53,12 +51,12 @@ const UserView = () => {
     setSelectedProf(items);
   };
 
-  const filteredUsers = selectedProf
-    ? users.filter(user => user.profession.name === selectedProf.name)
-    : search
+  const filteredUsers = search
     ? users.filter(user =>
         user.name.toLowerCase().includes(search.toLowerCase()),
       )
+    : selectedProf
+    ? users.filter(user => user.profession.name === selectedProf.name)
     : users;
 
   const length = filteredUsers.length;
@@ -104,15 +102,14 @@ const UserView = () => {
       {isLoading ? (
         <CustomLoader />
       ) : (
-        <div className="d-flex p-3">
-          {professions && (
-            <GroupList
-              items={professions}
-              onSelectItem={handleProfessionSelect}
-              selectedItem={selectedProf}
-              onClearFilter={handleClearFilterByProf}
-            />
-          )}
+        <div className="d-flex">
+          <GroupList
+            items={professions}
+            onSelectItem={handleProfessionSelect}
+            selectedItem={selectedProf}
+            onClearFilter={handleClearFilterByProf}
+          />
+
           <div className="d-flex flex-column ms-4 align-items-start">
             <SearchStatus num={length} />
             <TextInput
@@ -129,6 +126,7 @@ const UserView = () => {
               onDeleteItem={handleDeleteUser}
               selectedSort={sortBy}
               onToggleBookMark={handleToggleBookMark}
+              search={search}
             />
           </div>
         </div>

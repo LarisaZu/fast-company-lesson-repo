@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const TextInput = ({
@@ -8,20 +9,46 @@ const TextInput = ({
   type = 'text',
   placeholder,
   onChange,
+  error,
 }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const getInputClasses = () => {
+    if (name === 'email' || name === 'password' || name === 'name') {
+      return 'form-control' + (error ? ' is-invalid' : '');
+    }
+    return className;
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword(prev => !prev);
+  };
+
   return (
-    <div className="w-100">
+    <div className="w-100 mb-4">
       {label && <label htmlFor={name}>{label}</label>}
-      <input
-        id={name}
-        type={type}
-        name={name}
-        value={value}
-        autoComplete="off"
-        className={className}
-        onChange={onChange}
-        placeholder={placeholder}
-      />
+      <div className="input-group has-validation">
+        <input
+          id={name}
+          type={showPassword ? 'text' : type}
+          name={name}
+          value={value}
+          autoComplete="off"
+          className={getInputClasses()}
+          onChange={onChange}
+          placeholder={placeholder}
+        />
+        {type === 'password' && (
+          <button
+            className="btn btn-outline-secondary"
+            type="button"
+            onClick={toggleShowPassword}
+          >
+            <i className={'bi bi-eye' + (showPassword ? '-slash' : '')}></i>
+          </button>
+        )}
+        {error && <div className="invalid-feedback">{error}</div>}
+      </div>
     </div>
   );
 };
@@ -33,6 +60,7 @@ TextInput.propTypes = {
   name: PropTypes.string,
   value: PropTypes.string,
   type: PropTypes.string,
+  error: PropTypes.string,
   className: PropTypes.string,
   onChange: PropTypes.func,
   placeholder: PropTypes.string,

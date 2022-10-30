@@ -13,6 +13,7 @@ const UsersTable = ({
   onToggleBookMark,
   onSort,
   onDeleteItem,
+  search,
   ...rest
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,7 +22,7 @@ const UsersTable = ({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedProf]);
+  }, [selectedProf, search]);
 
   const columns = {
     name: { path: 'name', title: 'Имя' },
@@ -85,6 +86,7 @@ const UsersTable = ({
 
 UsersTable.propTypes = {
   users: PropTypes.array.isRequired,
+  search: PropTypes.string,
   selectedProf: PropTypes.object,
   onSort: PropTypes.func.isRequired,
   selectedSort: PropTypes.object.isRequired,
