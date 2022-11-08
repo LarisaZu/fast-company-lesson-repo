@@ -5,6 +5,7 @@ import Navigation from './components/Navigation';
 import UserView from './views/UserView';
 import LoginView from './views/LoginView';
 import HomeView from './views/HomeView';
+import HooksView from './views/HooksView';
 import UserDetailsView from './views/UserDetailsView';
 import UserEditView from './views/UserEditView';
 
@@ -30,6 +31,9 @@ function App() {
         </Route>
         <Route path="/users/:userId/edit">
           <UserEditView />
+        </Route>
+        <Route path="/hooks">
+          <HooksView />
         </Route>
       </Switch>
       <ToastContainer autoClose={3000} />

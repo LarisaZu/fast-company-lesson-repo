@@ -23,6 +23,11 @@ const Navigation = () => {
           Users
         </NavLink>
       </li>
+      <li className="nav-item">
+        <NavLink to={'/hooks'} className="nav-link" href="#">
+          Hooks
+        </NavLink>
+      </li>
     </ul>
   );
 };
