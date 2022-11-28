@@ -138,6 +138,7 @@ const SignupForm = () => {
         label="Почта"
         value={data.email}
         name="email"
+        autoFocus
         error={errors.email}
         onChange={handleChange}
       />

@@ -46,7 +46,7 @@ SelectField.propTypes = {
   options: PropTypes.array.isRequired,
   label: PropTypes.string.isRequired,
   defaultOption: PropTypes.string,
-  // value: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   error: PropTypes.string,

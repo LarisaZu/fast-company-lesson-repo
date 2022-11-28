@@ -89,6 +89,15 @@ const LoginForm = () => {
     }));
   };
 
+  const handleKeyDown = e => {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      const form = e.target.form;
+      const index = Array.prototype.indexOf.call(form, e.target);
+      form.elements[index + 1].focus();
+    }
+  };
+
   const validate = () => {
     // const errors = validator(data, validatorConfig);
     validateSchema
@@ -103,10 +112,12 @@ const LoginForm = () => {
     <form onSubmit={handleFormSubmit}>
       <TextInput
         label="Почта"
-        value={data.email}
         name="email"
+        autoFocus
+        value={data.email}
         error={errors.email}
         onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
       />
       <TextInput
         label="Пароль"
@@ -115,6 +126,7 @@ const LoginForm = () => {
         type="password"
         error={errors.password}
         onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
       />
       <CheckboxField
         name="stayOn"

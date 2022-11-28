@@ -8,7 +8,7 @@ import CustomLoader from '../components/CustomLoader';
 import TextInput from '../components/TextInput';
 import API from '../api';
 
-const UserView = () => {
+const UsersView = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [professions, setProfessions] = useState([]);
@@ -135,4 +135,4 @@ const UserView = () => {
   );
 };
 
-export default UserView;
+export default UsersView;

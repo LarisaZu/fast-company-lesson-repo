@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { getUserById } from '../api/fake.api.new/user.api';
+import {
+  AvatarCard,
+  QualitiesCard,
+  MeetingsCard,
+  CommentCard,
+} from '../components/user';
 import CustomLoader from '../components/CustomLoader';
-import User from '../components/User';
+import { getUserById } from '../api/fake.api.new/user.api';
+import './styles/UserDetailsView.css';
 
 const UserDetailsView = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
   const { userId } = useParams();
 
   useEffect(() => {
@@ -41,12 +48,17 @@ const UserDetailsView = () => {
       {isLoading ? (
         <CustomLoader />
       ) : (
-        <div className="container-md">
-          {!currentUser ? (
-            <h3>Loading...</h3>
-          ) : (
-            <User currentUser={currentUser} />
-          )}
+        <div className="container">
+          <div className="row gutters-sm">
+            <div className="col-md-4 mb-3">
+              <AvatarCard user={currentUser} />
+              <QualitiesCard qualities={currentUser.qualities} />
+              <MeetingsCard count={currentUser.completedMeetings} />
+            </div>
+            <div className="col-md-8">
+              <CommentCard />
+            </div>
+          </div>
         </div>
       )}
     </>

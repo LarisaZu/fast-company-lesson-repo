@@ -10,6 +10,8 @@ const TextInput = ({
   placeholder,
   onChange,
   error,
+  onKeyDown,
+  ...rest
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -37,6 +39,8 @@ const TextInput = ({
           className={getInputClasses()}
           onChange={onChange}
           placeholder={placeholder}
+          onKeyDown={onKeyDown}
+          {...rest}
         />
         {type === 'password' && (
           <button
@@ -63,5 +67,6 @@ TextInput.propTypes = {
   error: PropTypes.string,
   className: PropTypes.string,
   onChange: PropTypes.func,
+  onKeyDown: PropTypes.func,
   placeholder: PropTypes.string,
 };

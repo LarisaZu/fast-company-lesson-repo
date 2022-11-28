@@ -113,7 +113,7 @@ const UserEditForm = ({ currentUser, professions, qualities, onSubmit }) => {
       <SelectField
         options={professions}
         label="Выберите профессию"
-        value={user.profession._id}
+        value={user.profession._id || ''}
         name="profession"
         onChange={handleSelect}
         error={errors.profession}

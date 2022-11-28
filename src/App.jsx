@@ -2,7 +2,7 @@ import { Switch, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import Container from './components/Container';
 import Navigation from './components/Navigation';
-import UserView from './views/UserView';
+import UsersView from './views/UsersView';
 import LoginView from './views/LoginView';
 import HomeView from './views/HomeView';
 import HooksView from './views/HooksView';
@@ -24,7 +24,7 @@ function App() {
           <LoginView />
         </Route>
         <Route path="/users" exact>
-          <UserView />
+          <UsersView />
         </Route>
         <Route path="/users/:userId" exact>
           <UserDetailsView />

@@ -21,12 +21,12 @@ const withFunctions = Component => props => {
   };
 
   return (
-    <Card>
+    <Card styles="my-2">
       <Component
-        {...props}
         isAuth={isAuth}
         onLogin={handleLogin}
         onLogOut={handleLogOut}
+        {...props}
       />
     </Card>
   );

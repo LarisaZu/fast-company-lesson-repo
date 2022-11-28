@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import UserEditForm from '../components/UserEditForm';
+import BackButton from '../components/BackButton';
 import CustomLoader from '../components/CustomLoader';
 import API from '../api';
 
@@ -31,14 +32,12 @@ const UserEditView = () => {
               setProfessions(res[0]);
               setQualities(Object.values(res[1]));
               setUser(res[2]);
-
-              setIsLoading(false);
             }
           })
           .catch(err => {
             console.log(err);
-            setIsLoading(false);
-          });
+          })
+          .finally(() => setIsLoading(false));
       }
     };
 
@@ -68,17 +67,20 @@ const UserEditView = () => {
       {isLoading ? (
         <CustomLoader />
       ) : (
-        <div className="row">
-          <div className="col-md-6 offset-md-3 shadow p-4">
-            <h3 className="mb-4">Редактировать</h3>
-            <UserEditForm
-              currentUser={user}
-              professions={professions}
-              qualities={qualities}
-              onSubmit={updateUserHandler}
-            />
+        <>
+          <BackButton />
+          <div className="row gutters-sm">
+            <div className="col-md-6 offset-md-3 shadow p-4">
+              <h3 className="mb-4">Редактировать</h3>
+              <UserEditForm
+                currentUser={user}
+                professions={professions}
+                qualities={qualities}
+                onSubmit={updateUserHandler}
+              />
+            </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );

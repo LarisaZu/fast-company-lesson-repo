@@ -10,6 +10,7 @@ const SimpleComponent = ({ onLogin, onLogOut, isAuth }) => {
     }
   };
   const className = isAuth ? 'btn-light' : 'btn-dark';
+
   return (
     <div>
       <button

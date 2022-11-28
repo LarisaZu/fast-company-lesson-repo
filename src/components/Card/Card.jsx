@@ -1,19 +1,22 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 
-const CardWrapper = ({ children }) => {
+const Card = ({ children, styles, bodyStyles }) => {
   return (
-    <div className="card my-2">
-      <div className="card-body">{children}</div>
+    <div className={'card' + (styles ? ' ' + styles : '')}>
+      <div className={'card-body' + (bodyStyles ? ' ' + bodyStyles : '')}>
+        {children}
+      </div>
     </div>
   );
 };
 
-CardWrapper.propTypes = {
+Card.propTypes = {
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
+  styles: PropTypes.string,
+  bodyStyles: PropTypes.string,
 };
 
-export default CardWrapper;
+export default Card;

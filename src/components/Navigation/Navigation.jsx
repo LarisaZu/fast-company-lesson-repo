@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import './Navigation.css';
 
 const Navigation = () => {
   return (
@@ -6,9 +7,10 @@ const Navigation = () => {
       <li className="nav-item">
         <NavLink
           to={'/'}
-          className="nav-link active"
+          className="nav-link"
           aria-current="page"
           href="#"
+          exact
         >
           Main
         </NavLink>
