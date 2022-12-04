@@ -1,50 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import _ from 'lodash';
-import { toast } from 'react-toastify';
 import GroupList from '../components/GroupList';
 import SearchStatus from '../components/SearchStatus';
 import UsersTable from '../components/UsersTable';
 import CustomLoader from '../components/CustomLoader';
 import TextInput from '../components/TextInput';
-import API from '../api';
+import userContext from '../context/users/userContext';
+import professionContext from '../context/profession/professionContext';
 
 const UsersView = () => {
-  const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [professions, setProfessions] = useState([]);
   const [selectedProf, setSelectedProf] = useState(null);
   const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' });
   const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    let isCleanup = false;
-
-    const fetchData = async () => {
-      await Promise.all([API.fetchAllProfessions(), API.users.fetchAllUsers()])
-        .then(res => {
-          if (!isCleanup) {
-            setProfessions(res[0]);
-            setUsers(res[1]);
-            setIsLoading(false);
-          }
-        })
-        .catch(err => {
-          toast.error('Что-то не так! Повторите запрос позже', {
-            position: 'top-center',
-          });
-          setIsLoading(false);
-        });
-    };
-
-    fetchData();
-
-    return () => {
-      isCleanup = true;
-      setIsLoading(false);
-    };
-  }, []);
+  const { users, isLoading } = useContext(userContext);
+  const { professions } = useContext(professionContext);
 
   const handleProfessionSelect = items => {
+    console.log(
+      '🚀 ~ file: UsersView.jsx:21 ~ handleProfessionSelect ~ items',
+      items,
+    );
     if (search) {
       handleClearFilterBySearch();
     }
@@ -56,7 +32,7 @@ const UsersView = () => {
         user.name.toLowerCase().includes(search.toLowerCase()),
       )
     : selectedProf
-    ? users.filter(user => user.profession.name === selectedProf.name)
+    ? users.filter(user => user.profession === selectedProf._id)
     : users;
 
   const length = filteredUsers.length;
@@ -64,17 +40,19 @@ const UsersView = () => {
   const sortedUsers = _.orderBy(filteredUsers, sortBy.path, sortBy.order);
 
   const handleDeleteUser = id => {
-    setUsers(users.filter(user => user._id !== id));
+    console.log('🚀 ~ file: UsersView.jsx:70 ~ handleDeleteUser ~ id', id);
+    // setUsers(users.filter(user => user._id !== id));
   };
   const handleToggleBookMark = id => {
-    setUsers(
-      users.map(user => {
-        if (user._id === id) {
-          return { ...user, bookmark: !user.bookmark };
-        }
-        return user;
-      }),
-    );
+    console.log('🚀 ~ file: UsersView.jsx:74 ~ handleToggleBookMark ~ id', id);
+    // setUsers(
+    //   users.map(user => {
+    //     if (user._id === id) {
+    //       return { ...user, bookmark: !user.bookmark };
+    //     }
+    //     return user;
+    //   }),
+    // );
   };
 
   const handleClearFilterByProf = () => {

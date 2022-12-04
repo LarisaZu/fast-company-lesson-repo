@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Pagination from '../Pagination';
 import BookMark from '../BookMark';
 import QualitiesList from '../QualitiesList';
+import Profession from '../Profession';
 import Table from '../Table';
 import paginate from '../../utils/paginate';
 
@@ -32,7 +33,12 @@ const UsersTable = ({
         return <QualitiesList qualities={user.qualities} />;
       },
     },
-    professions: { path: 'profession.name', title: 'Профессия' },
+    professions: {
+      title: 'Профессия',
+      content: user => {
+        return <Profession id={user.profession} />;
+      },
+    },
     completedMeetings: { path: 'completedMeetings', title: 'Встретился, раз' },
     rate: { path: 'rate', title: 'Оценка' },
     bookmark: {
