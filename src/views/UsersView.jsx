@@ -1,26 +1,22 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import _ from 'lodash';
 import GroupList from '../components/GroupList';
 import SearchStatus from '../components/SearchStatus';
 import UsersTable from '../components/UsersTable';
 import CustomLoader from '../components/CustomLoader';
 import TextInput from '../components/TextInput';
-import userContext from '../context/users/userContext';
-import professionContext from '../context/profession/professionContext';
+import { useUsers } from '../hooks/useUsers';
+import { useProfessions } from '../hooks/useProfession';
 
 const UsersView = () => {
   const [selectedProf, setSelectedProf] = useState(null);
   const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' });
   const [search, setSearch] = useState('');
 
-  const { users, isLoading } = useContext(userContext);
-  const { professions } = useContext(professionContext);
+  const { users, isLoading } = useUsers();
+  const { professions } = useProfessions();
 
   const handleProfessionSelect = items => {
-    console.log(
-      '🚀 ~ file: UsersView.jsx:21 ~ handleProfessionSelect ~ items',
-      items,
-    );
     if (search) {
       handleClearFilterBySearch();
     }
@@ -29,7 +25,7 @@ const UsersView = () => {
 
   const filteredUsers = search
     ? users.filter(user =>
-        user.name.toLowerCase().includes(search.toLowerCase()),
+        user?.name?.toLowerCase().includes(search.toLowerCase()),
       )
     : selectedProf
     ? users.filter(user => user.profession === selectedProf._id)
@@ -69,9 +65,13 @@ const UsersView = () => {
 
   const handleInputSearchChange = e => {
     const { value } = e.currentTarget;
-    if (selectedProf) {
-      handleClearFilterByProf();
-    }
+    console.log(
+      '🚀 ~ file: UsersView.jsx:68 ~ handleInputSearchChange ~ value',
+      value,
+    );
+    // if (selectedProf) {
+    //   handleClearFilterByProf();
+    // }
     setSearch(value);
   };
 

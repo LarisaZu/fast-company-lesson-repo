@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import TextInput from '../TextInput';
 import SelectField from '../SelectField';
 import CustomSelect from '../CustomSelect';
+import CustomLoader from '../CustomLoader';
 import RadioInput from '../RadioInput';
 import CheckboxField from '../CheckboxField';
 import { validator } from '../../utils/validator';
-import API from '../../api';
+import { useProfessions } from '../../hooks/useProfession';
+import { useQualities } from '../../hooks/useQualities';
+import { useAuth } from '../../hooks/useAuth';
 
 const initialData = {
   email: '',
@@ -18,9 +22,12 @@ const initialData = {
 
 const SignupForm = () => {
   const [data, setData] = useState(initialData);
-  const [professions, setProfessions] = useState([]);
-  const [qualities, setQualities] = useState([]);
   const [errors, setErrors] = useState({});
+  const { professions } = useProfessions();
+  const { qualities } = useQualities();
+  const { signUp, isLoading } = useAuth();
+
+  const history = useHistory();
 
   const validatorConfig = {
     email: {
@@ -61,22 +68,6 @@ const SignupForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  useEffect(() => {
-    let isCleanup = false;
-
-    Promise.all([API.fetchAllProfessions(), API.users.fetchQualities()]).then(
-      res => {
-        if (!isCleanup) {
-          setProfessions(res[0]);
-          setQualities(Object.values(res[1]));
-        }
-      },
-    );
-    return () => {
-      isCleanup = true;
-    };
-  }, []);
-
   const colorStyles = {
     multiValueLabel: styles => ({
       ...styles,
@@ -88,16 +79,22 @@ const SignupForm = () => {
     }),
   };
 
-  const handleFormSubmit = e => {
+  const handleFormSubmit = async e => {
     e.preventDefault();
 
     const isValid = validate();
     if (!isValid) return;
-    formReset();
-  };
 
-  const formReset = () => {
-    setData(initialData);
+    const newData = {
+      ...data,
+      qualities: data.qualities.map(el => el._id),
+    };
+    try {
+      await signUp(newData);
+      history.push('/');
+    } catch (error) {
+      setErrors(error);
+    }
   };
 
   const handleChange = e => {
@@ -133,72 +130,74 @@ const SignupForm = () => {
   };
 
   return (
-    <form onSubmit={handleFormSubmit} autoComplete="off">
-      <TextInput
-        label="Почта"
-        value={data.email}
-        name="email"
-        autoFocus
-        error={errors.email}
-        onChange={handleChange}
-      />
-      <TextInput
-        label="Пароль"
-        value={data.password}
-        name="password"
-        type="password"
-        error={errors.password}
-        onChange={handleChange}
-      />
-      <SelectField
-        options={professions}
-        label="Выберите свою профессию"
-        value={data.profession}
-        onChange={handleChange}
-        name="profession"
-        error={errors.profession}
-      />
-      <RadioInput
-        options={[
-          { name: 'M', value: 'male' },
-          { name: 'Ж', value: 'female' },
-        ]}
-        value={data.sex}
-        onChange={handleChange}
-        name="sex"
-        label="Укажите ваш пол"
-      />
-
-      <CustomSelect
-        isMulti
-        name="qualities"
-        placeholder="Выберите вариант..."
-        options={qualities}
-        getOptionValue={option => option._id}
-        getOptionLabel={option => option.name}
-        onChange={handleSelect}
-        styles={colorStyles}
-        label="Выберите качества"
-        error={errors.qualities}
-        value={data.qualities}
-      />
-      <CheckboxField
-        name="licence"
-        checked={data.licence}
-        onChange={handleCheckbox}
-        error={errors.licence}
-      >
-        Подтвердить <a href="/">Лицензионное соглашение</a>
-      </CheckboxField>
-
-      <button
-        className="btn btn-primary w-100 mx-auto"
-        type="submit"
-        disabled={!isValid}
-      >
-        Отправить
-      </button>
-    </form>
+    <>
+      {isLoading && <CustomLoader />}
+      <form onSubmit={handleFormSubmit}>
+        {/* autoComplete="off" */}
+        <TextInput
+          label="Почта"
+          value={data.email}
+          name="email"
+          autoFocus
+          error={errors.email}
+          onChange={handleChange}
+        />
+        <TextInput
+          label="Пароль"
+          value={data.password}
+          name="password"
+          type="password"
+          error={errors.password}
+          onChange={handleChange}
+        />
+        <SelectField
+          options={professions}
+          label="Выберите свою профессию"
+          value={data.profession}
+          onChange={handleChange}
+          name="profession"
+          error={errors.profession}
+        />
+        <RadioInput
+          options={[
+            { name: 'M', value: 'male' },
+            { name: 'Ж', value: 'female' },
+          ]}
+          value={data.sex}
+          onChange={handleChange}
+          name="sex"
+          label="Укажите ваш пол"
+        />
+        <CustomSelect
+          isMulti
+          name="qualities"
+          placeholder="Выберите вариант..."
+          options={qualities}
+          getOptionValue={option => option._id}
+          getOptionLabel={option => option.name}
+          onChange={handleSelect}
+          styles={colorStyles}
+          label="Выберите качества"
+          error={errors.qualities}
+          value={data.qualities}
+        />
+        <CheckboxField
+          name="licence"
+          checked={data.licence}
+          onChange={handleCheckbox}
+          error={errors.licence}
+        >
+          Подтвердить <a href="/">Лицензионное соглашение</a>
+        </CheckboxField>
+        <button
+          className="btn btn-primary w-100 mx-auto"
+          type="submit"
+          disabled={!isValid}
+        >
+          Отправить
+        </button>
+      </form>
+    </>
   );
 };
 

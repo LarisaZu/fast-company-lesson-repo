@@ -1,20 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
-import professionApi from '../../services/profession-api';
+import qualityApi from '../services/quality-api';
 
-const ProfessionContext = React.createContext();
+const QualityContext = React.createContext();
 
-const ProfessionProvider = ({ children }) => {
-  const [professions, setProfessions] = useState([]);
+export const useQualities = () => {
+  return useContext(QualityContext);
+};
+
+export const QualityProvider = ({ children }) => {
+  const [qualities, setQualities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await professionApi.get();
-        setProfessions(data.content);
+        const data = await qualityApi.get();
+
+        if (data) {
+          setQualities(Object.values(data));
+        }
       } catch (error) {
         errorCatcher();
       } finally {
@@ -34,8 +41,8 @@ const ProfessionProvider = ({ children }) => {
     }
   }, [error]);
 
-  const getProfessionById = id => {
-    return professions.find(el => el._id === id);
+  const getUserQualities = array => {
+    return qualities.filter(el => array.indexOf(el._id) !== -1);
   };
 
   const errorCatcher = () => {
@@ -44,14 +51,12 @@ const ProfessionProvider = ({ children }) => {
   };
 
   return (
-    <ProfessionContext.Provider
-      value={{ professions, isLoading, getProfessionById }}
-    >
+    <QualityContext.Provider value={{ qualities, isLoading, getUserQualities }}>
       {children}
-    </ProfessionContext.Provider>
+    </QualityContext.Provider>
   );
 };
 
-ProfessionProvider.propTypes = {
+QualityProvider.propTypes = {
   children: PropTypes.node,
 };

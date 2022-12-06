@@ -14,10 +14,7 @@ export default function UserProvider({ children }) {
     const fetchData = async () => {
       try {
         const { content } = await userApi.get();
-        console.log(
-          '🚀 ~ file: UserProvider.jsx:17 ~ fetchData ~ content',
-          content,
-        );
+
         setUsers(content);
       } catch (error) {
         errorCatcher();

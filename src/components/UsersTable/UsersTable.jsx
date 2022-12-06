@@ -26,7 +26,12 @@ const UsersTable = ({
   }, [selectedProf, search]);
 
   const columns = {
-    name: { path: 'name', title: 'Имя' },
+    name: {
+      title: 'Имя',
+      content: user => {
+        return <>{user.name || 'Anonymous'}</>;
+      },
+    },
     qualities: {
       title: 'Качества',
       content: user => {

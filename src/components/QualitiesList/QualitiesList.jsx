@@ -1,10 +1,9 @@
-import { useContext } from 'react';
 import PropTypes from 'prop-types';
 import Quality from '../Quality/Quality';
-import qualityContext from '../../context/quality/qualityContext';
+import { useQualities } from '../../hooks/useQualities';
 
 const QualitiesList = ({ qualities }) => {
-  const { isLoading, getUserQualities } = useContext(qualityContext);
+  const { isLoading, getUserQualities } = useQualities();
 
   const userQualities = getUserQualities(qualities);
 

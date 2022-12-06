@@ -2,19 +2,22 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import SelectField from '../SelectField';
 import Textarea from '../Textarea';
+import { useUsers } from '../../hooks/useUsers';
 import API from '../../api';
 
 const initialData = { userId: '', content: '' };
 
 const NewCommentForm = ({ userId, onSubmit }) => {
-  const [users, setUsers] = useState([]);
+  // const [users, setUsers] = useState([]);
   const [data, setData] = useState(initialData);
+
+  const { users } = useUsers();
 
   const isDisabled = data.content === '' || data.userId === '';
 
-  useEffect(() => {
-    API.users.fetchAllUsers().then(res => setUsers(res));
-  }, [userId]);
+  // useEffect(() => {
+  //   API.users.fetchAllUsers().then(res => setUsers(res));
+  // }, [userId]);
 
   const handleSubmit = e => {
     e.preventDefault();

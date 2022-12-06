@@ -17,7 +17,7 @@ const MeetingsCard = ({ count }) => {
 };
 
 MeetingsCard.propTypes = {
-  count: PropTypes.number.isRequired,
+  count: PropTypes.number,
 };
 
 export default MeetingsCard;

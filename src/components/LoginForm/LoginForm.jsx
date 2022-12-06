@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import * as yup from 'yup';
+import CustomLoader from '../CustomLoader';
 import TextInput from '../TextInput/TextInput';
 import CheckboxField from '../CheckboxField';
+import { useAuth } from '../../hooks/useAuth';
 // import { validator } from '../../utils/validator';
 
 const initialData = { email: '', password: '', stayOn: false };
@@ -9,6 +12,10 @@ const initialData = { email: '', password: '', stayOn: false };
 const LoginForm = () => {
   const [data, setData] = useState(initialData);
   const [errors, setErrors] = useState({});
+
+  const history = useHistory();
+
+  const { login, isLoading } = useAuth();
 
   const validateSchema = yup.object().shape({
     password: yup
@@ -58,17 +65,18 @@ const LoginForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  const handleFormSubmit = e => {
+  const handleFormSubmit = async e => {
     e.preventDefault();
 
     const isValid = validate();
     if (!isValid) return;
-    console.log(data);
-    formReset();
-  };
 
-  const formReset = () => {
-    setData(initialData);
+    try {
+      await login(data);
+      history.push('/');
+    } catch (error) {
+      setErrors(error);
+    }
   };
 
   const handleInputChange = e => {
@@ -109,40 +117,43 @@ const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleFormSubmit}>
-      <TextInput
-        label="Почта"
-        name="email"
-        autoFocus
-        value={data.email}
-        error={errors.email}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-      />
-      <TextInput
-        label="Пароль"
-        value={data.password}
-        name="password"
-        type="password"
-        error={errors.password}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-      />
-      <CheckboxField
-        name="stayOn"
-        checked={data.stayOn}
-        onChange={handleCheckbox}
-      >
-        Оставаться в системе
-      </CheckboxField>
-      <button
-        className="btn btn-primary w-100 mx-auto"
-        type="submit"
-        disabled={!isValid}
-      >
-        Отправить
-      </button>
-    </form>
+    <>
+      {isLoading && <CustomLoader />}
+      <form onSubmit={handleFormSubmit}>
+        <TextInput
+          label="Почта"
+          name="email"
+          autoFocus
+          value={data.email}
+          error={errors.email}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+        />
+        <TextInput
+          label="Пароль"
+          value={data.password}
+          name="password"
+          type="password"
+          error={errors.password}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+        />
+        <CheckboxField
+          name="stayOn"
+          checked={data.stayOn}
+          onChange={handleCheckbox}
+        >
+          Оставаться в системе
+        </CheckboxField>
+        <button
+          className="btn btn-primary w-100 mx-auto"
+          type="submit"
+          disabled={!isValid}
+        >
+          Отправить
+        </button>
+      </form>
+    </>
   );
 };
 

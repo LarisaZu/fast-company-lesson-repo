@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import getRandomStr from '../../utils/getRandomStr';
 import displayDate from '../../utils/displayDate';
 import API from '../../api';
+import { useUsers } from '../../hooks/useUsers';
 
 const Comment = ({ comment, onRemove }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { identifyUserById } = useUsers();
 
   const { created_at, _id, content, userId } = comment;
   const randomUrl = getRandomStr();
@@ -14,11 +16,15 @@ const Comment = ({ comment, onRemove }) => {
   useEffect(() => {
     setIsLoading(true);
 
-    API.users.getUserById(userId).then(res => {
-      setUser(res);
-      setIsLoading(false);
-    });
-  }, [userId]);
+    const author = identifyUserById(userId);
+    console.log('🚀 ~ file: Comment.jsx:20 ~ useEffect ~ author', author);
+    setUser(author);
+    setIsLoading(false);
+    // API.users.getUserById(userId).then(res => {
+    //   setUser(res);
+    //   setIsLoading(false);
+    // });
+  }, [identifyUserById, userId]);
 
   return (
     <div className="bg-success bg-opacity-10 card-body mb-3">

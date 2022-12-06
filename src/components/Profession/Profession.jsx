@@ -1,11 +1,11 @@
-import { useContext } from 'react';
 import PropTypes from 'prop-types';
-import professionContext from '../../context/profession/professionContext';
+import { useProfessions } from '../../hooks/useProfession';
 
 const Profession = ({ id }) => {
-  const { isLoading, getProfessionById } = useContext(professionContext);
+  const { isLoading, getProfessionById } = useProfessions();
 
   const userProf = getProfessionById(id);
+
   return <>{!isLoading ? <p>{userProf.name}</p> : 'loading...'}</>;
 };
 

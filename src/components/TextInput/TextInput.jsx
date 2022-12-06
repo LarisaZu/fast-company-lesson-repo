@@ -35,7 +35,6 @@ const TextInput = ({
           type={showPassword ? 'text' : type}
           name={name}
           value={value}
-          autoComplete="off"
           className={getInputClasses()}
           onChange={onChange}
           placeholder={placeholder}

@@ -8,40 +8,37 @@ import {
   CommentCard,
 } from '../components/user';
 import CustomLoader from '../components/CustomLoader';
-import { getUserById } from '../api/fake.api.new/user.api';
+// import { getUserById } from '../api/fake.api.new/user.api';
+import { useUsers } from '../hooks/useUsers';
 import './styles/UserDetailsView.css';
 
 const UserDetailsView = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const { getUserById } = useUsers();
+
   const { userId } = useParams();
 
   useEffect(() => {
-    let isCleanup = false;
-
     const fetchData = async () => {
       try {
         const data = await getUserById(userId);
-
-        if (!isCleanup) {
+        if (data) {
           setCurrentUser(data);
         }
-        setIsLoading(false);
       } catch (error) {
         toast.error(`Что-то пошло не так! Повторите попытку позже.`, {
           position: 'top-center',
         });
         console.log(error.message);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
-
-    return () => {
-      isCleanup = true;
-    };
-  }, [userId]);
+  }, [getUserById, userId]);
 
   return (
     <>
